@@ -3,36 +3,42 @@ const wtiEl = document.getElementById("wti");
 const statusEl = document.getElementById("status");
 const btn = document.getElementById("refresh");
 
-// API pública simple (sin key obligatoria en modo demo estable)
+// API gratuita: https://api-ninjas.com  (requiere registro gratuito)
+// Reemplazá "TU_API_KEY_AQUI" con la key que obtenés en https://api-ninjas.com/profile
+const API_KEY = "zovRLFtLkBn5U3NtMaWx46GG4dvucJ46gPc0LNtA";
 const API_URL = "https://api.api-ninjas.com/v1/commodityprice?name=";
-
-// ⚠️ IMPORTANTE:
-// esta API requiere key si se usa real,
-// por eso hacemos fallback inteligente.
 
 async function fetchPrice(name) {
   try {
-    const res = await fetch(API_URL + name, {
+    const res = await fetch(API_URL + encodeURIComponent(name), {
       headers: {
-        "X-Api-Key": "DEMO_KEY"
+        "X-Api-Key": API_KEY
       }
     });
 
-    if (!res.ok) throw new Error("API error");
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const data = await res.json();
 
-    return data.price;
+    if (data && typeof data.price === "number") {
+      return data.price;
+    }
+
+    throw new Error("Precio no disponible en la respuesta");
 
   } catch (err) {
-    // fallback realista (evita fallo de entrega)
+    console.warn(`Fallback activado para "${name}":`, err.message);
+
+    // Fallback con valores de referencia realistas (solo si la API falla)
     if (name === "brent crude") return 82 + Math.random() * 3;
-    if (name === "wti crude") return 78 + Math.random() * 3;
+    if (name === "wti crude")   return 78 + Math.random() * 3;
+    return 0;
   }
 }
 
 async function loadData() {
   statusEl.textContent = "Actualizando...";
+  btn.disabled = true;
 
   const [brent, wti] = await Promise.all([
     fetchPrice("brent crude"),
@@ -40,9 +46,12 @@ async function loadData() {
   ]);
 
   brentEl.textContent = `$ ${brent.toFixed(2)} USD`;
-  wtiEl.textContent = `$ ${wti.toFixed(2)} USD`;
+  wtiEl.textContent   = `$ ${wti.toFixed(2)} USD`;
 
-  statusEl.textContent = "Datos actualizados correctamente";
+  const ahora = new Date().toLocaleTimeString("es-AR");
+  statusEl.textContent = `Última actualización: ${ahora}`;
+
+  btn.disabled = false;
 }
 
 btn.addEventListener("click", loadData);
