@@ -1,0 +1,33 @@
+Tema 4
+
+2 - Cual es el límite de neuronas en las capas ocultas de una red?
+	a- 8
+	b- 24
+	c- 16
+	d- Todas son correctas
+	e- Ninguna es correcta
+
+4 – Explique la diferencia de Función Síncrona y Asíncrona, dibuje un pequeño diagrama que explique cómo funcionan los dos métodos 
+    y adjúntelo al examen en formato jpg .
+
+3 - Escriba un código en una sola línea que cree un tensor con la forma [10, 10] con números aleatorios (Random) del 1 al 4 y que el tensor solo 
+    muestre datos enteros, utilice el método propuesto en la sección API correspondiente del sitio de https://js.tensorflow.org/api/latest/.
+
+4 – Donde Puedo ejecutar un modelo de aprendizaje? Justifique su respuesta.
+   
+    a - CPU
+    b - GPU	
+    c - memoria RAM
+
+5 - Se adjuntan dos archivos: un servidor sistema.js y un frontend index.html. 
+    hacer los ajustes necesarios para el el sistema funcione con la Formula objetivo:  y = 2x + 3 y el Backend en el Puerto 8008
+    Agregar la Grafica de perdida.  
+
+6 - El alumno debe crear una página web simple (HTML, CSS y JavaScript) 
+    donde se muestre el precio actual del barril de petróleo Brent Crude (el de referencia en Europa y gran parte del mundo) 
+	y del West Texas Intermediate (WTI) (el de referencia en EE. UU.).
+	Para ello debe utilizar una API gratuita de internet.
+		
+
+Entrega de ejercicios: Entregar una carpeta .zip con los dos archivos modificados y un README.md 
+         que explique cómo ejecutar el sistema. No incluir node_modules ni librerias extras solo los archivos con código fuente.	

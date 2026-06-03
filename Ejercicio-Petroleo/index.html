@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crude Oil Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Crude Oil Dashboard</h1>
+
+    <p class="subtitle">
+      Precio en tiempo real de Brent Crude y WTI
+    </p>
+
+    <div class="grid">
+
+      <div class="card">
+        <h2>Brent Crude</h2>
+        <div id="brent" class="price">Cargando...</div>
+      </div>
+
+      <div class="card">
+        <h2>WTI</h2>
+        <div id="wti" class="price">Cargando...</div>
+      </div>
+
+    </div>
+
+    <button id="refresh">Actualizar datos</button>
+
+    <p id="status"></p>
+
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+</html>

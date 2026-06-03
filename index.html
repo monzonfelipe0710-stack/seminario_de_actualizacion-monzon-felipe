@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ejercicio C2 - y = 2x + 3</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background: #0a0a1a;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      gap: 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      color: #a5b4fc;
+    }
+
+    .card {
+      background: #111128;
+      border: 1px solid #2a2a50;
+      border-radius: 8px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    input {
+      width: 100%;
+      padding: .6rem;
+      background: #0a0a1a;
+      border: 1px solid #2a2a50;
+      color: white;
+    }
+
+    button {
+      padding: .6rem;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #btn-train { background: #4338ca; color: white; }
+    #btn-predict { background: #a5b4fc; }
+
+    #resultado {
+      text-align: center;
+      padding-top: .5rem;
+      border-top: 1px solid #2a2a50;
+    }
+
+    canvas {
+      background: #0a0a1a;
+      border: 1px solid #2a2a50;
+      border-radius: 8px;
+      padding: .5rem;
+      max-width: 420px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Modelo Lineal y = 2x + 3</h1>
+
+  <div class="card">
+    <button id="btn-train">Entrenar modelo</button>
+
+    <input id="input-x" type="number" placeholder="Ingresa X" />
+
+    <button id="btn-predict">Predecir</button>
+
+    <div id="resultado">Esperando...</div>
+  </div>
+
+  <canvas id="lossChart"></canvas>
+
+<script>
+
+const btnTrain = document.getElementById("btn-train");
+const btnPredict = document.getElementById("btn-predict");
+const inputX = document.getElementById("input-x");
+const resultado = document.getElementById("resultado");
+
+let chart = null;
+
+async function entrenar() {
+
+  resultado.textContent = "Entrenando...";
+
+  const res = await fetch("http://127.0.0.1:8008/train", {
+    method: "POST"
+  });
+
+  const data = await res.json();
+
+  resultado.textContent =
+    data.status === "ok" ? "Modelo entrenado" : data.message;
+
+  await cargarGrafica();
+}
+
+async function cargarGrafica() {
+
+  const res = await fetch("http://127.0.0.1:8008/loss");
+  const data = await res.json();
+
+  const loss = data.loss || [];
+
+  if (!loss.length) return;
+
+  const labels = loss.map((_, i) => i);
+
+  if (chart) chart.destroy();
+
+  chart = new Chart(document.getElementById("lossChart"), {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: "Loss",
+        data: loss,
+        borderColor: "#a5b4fc",
+        tension: 0.2
+      }]
+    }
+  });
+}
+
+async function predecir() {
+
+  const x = Number(inputX.value);
+
+  const res = await fetch("http://127.0.0.1:8008/predict", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ x })
+  });
+
+  const data = await res.json();
+
+  resultado.textContent =
+    data.status === "ok"
+      ? `Y ≈ ${data.y.toFixed(2)}`
+      : data.message;
+}
+
+btnTrain.addEventListener("click", entrenar);
+btnPredict.addEventListener("click", predecir);
+
+</script>
+
+</body>
+</html>
